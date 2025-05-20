@@ -13,6 +13,8 @@ import modell.Konfiguracio;
 
 public class NewJFrame extends javax.swing.JFrame {
 
+    private Konfiguracio modell;
+
     public NewJFrame() {
         initComponents();
     }
@@ -47,7 +49,7 @@ public class NewJFrame extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         mnuPrgKilepes = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        mnuKimenet = new javax.swing.JMenuItem();
 
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
@@ -188,8 +190,13 @@ public class NewJFrame extends javax.swing.JFrame {
 
         jMenu1.setText("Program");
 
-        jMenuItem1.setText("jMenuItem1");
-        jMenu1.add(jMenuItem1);
+        mnuKimenet.setText("Modell beszédes kimenete");
+        mnuKimenet.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mnuKimenetActionPerformed(evt);
+            }
+        });
+        jMenu1.add(mnuKimenet);
 
         jMenuBar1.add(jMenu1);
 
@@ -230,15 +237,15 @@ public class NewJFrame extends javax.swing.JFrame {
         //JFileChooser jfc = new JFileChooser();//Documents könnyvtár
         String hely = System.getProperty("user.dir");
         JFileChooser jfc = new JFileChooser(hely);//aktuális projekt könnyvtár
-        
+
         /* jfc paraméterezése: */
         File kivalasztottFajl = new File(hely + "\\" + txtNev.getText() + ".txt");
         System.out.println("fajl = " + kivalasztottFajl);
         jfc.setSelectedFile(kivalasztottFajl);
-        
+
         /* jfc megjelenítése, vizsgálata */
         int gomb = jfc.showSaveDialog(rootPane);//null | this <-- ez ua, mint rootPane
-        
+
         if (gomb == JFileChooser.APPROVE_OPTION) {
             kivalasztottFajl = jfc.getSelectedFile();
             String fajlElerese = kivalasztottFajl.getAbsolutePath();
@@ -253,7 +260,7 @@ public class NewJFrame extends javax.swing.JFrame {
                 Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+
         /* a mentés alapszerkezete: */
 //        Path path = Path.of("kimenet.txt");//hova írjuk
 //        byte[] bytes = jTextField1.getText().getBytes();//mit írunk
@@ -275,15 +282,13 @@ public class NewJFrame extends javax.swing.JFrame {
                 String adatok = Files.readString(kivalasztottFajl.toPath());
                 System.out.println("A beolvasott fájl tartalma: ");
                 System.out.println(adatok);
-                
+
                 /* sorok feldolgozása */
                 String[] sorok = adatok.split("\n");
                 String nev = sorok[0];
                 int index = Integer.parseInt(sorok[1]);
                 boolean chb = Boolean.parseBoolean(sorok[2]);
-                
-                Konfiguracio modell = new Konfiguracio(nev, index, chb);
-                
+
                 txtNev.setText(modell.getNev());
                 cmbSzak.setSelectedIndex(modell.getSzakIndex());
                 chbHirlevel.setSelected(modell.isHirlevel());
@@ -297,14 +302,32 @@ public class NewJFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_cmbKeszActionPerformed
 
-    private String tartalom(){
+    private void mnuKimenetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mnuKimenetActionPerformed
+        /*TODO: 
+            *ha nincs modell betöltve, akkor az nullPointer
+            * a szak nevet is ki kell nyerni, most ??? van helyette
+        */
+        
+        String msg = "név: " + modell.getNev()
+                + "\nszak: %s(%d)".formatted("???", modell.getSzakIndex())
+                + "\nhírlevél :" + (modell.isHirlevel() ? "kér" : "nem kér");
+
+        try {
+            Files.writeString(Path.of("modellBeszedes.txt"), msg);
+        } catch (IOException ex) {
+            Logger.getLogger(NewJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_mnuKimenetActionPerformed
+
+    private String tartalom() {
         String nev = txtNev.getText();
         //String szak = cmbSzak.getSelectedItem().toString();
-        String szak = (String)cmbSzak.getSelectedItem();
+        String szak = (String) cmbSzak.getSelectedItem();
         boolean hirlevel = chbHirlevel.isSelected();
-        final String SEP =" ";
-        return nev+SEP+cmbSzak.getSelectedIndex()+SEP+hirlevel;
+        final String SEP = " ";
+        return nev + SEP + cmbSzak.getSelectedIndex() + SEP + hirlevel;
     }
+
     private void kilepes() throws HeadlessException {
         String msg = "Biztos kilépsz?";
         String cim = "KILÉPÉS";
@@ -316,10 +339,10 @@ public class NewJFrame extends javax.swing.JFrame {
             int hibaKod = 0;
             System.exit(hibaKod);
         }
-        
+
         //System.out.println("gomb = " + gomb);//YES: 0, NO: 1 , X: -1
     }
-    
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -363,13 +386,13 @@ public class NewJFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JMenu menuKonfig;
+    private javax.swing.JMenuItem mnuKimenet;
     private javax.swing.JMenuItem mnuPrgBetoltes;
     private javax.swing.JMenuItem mnuPrgKilepes;
     private javax.swing.JMenuItem mnuPrgMentes;
