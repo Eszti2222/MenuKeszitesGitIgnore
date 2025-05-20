@@ -1,0 +1,3 @@
+név: asd asd 3
+szak: Szoftverfejlesztő(1)
+hírlevél: kér
